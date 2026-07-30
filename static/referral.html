@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referral Portal — Brains College</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--brand:#123A4B;--brand2:#1C566E;--brand3:#0C2A37;--gold:#D6A94A;--gold2:#EBCB7E;
+      --ink:#17242B;--soft:#566771;--faint:#8695A0;--line:#DDE4EA;--bg:#F4F6F8;
+      --ok:#12794a;--ok-bg:#e3f5ea;--warn:#9a6400;--warn-bg:#fdf2d6;--bad:#b02a1c;--bad-bg:#fce6e2;
+      --shadow:0 4px 14px rgba(20,31,27,.06),0 14px 40px rgba(20,31,27,.05);--r:16px;}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);font-family:'Inter',system-ui,Arial,sans-serif;color:var(--ink)}
+    button,input,select,textarea{font:inherit;color:inherit}
+
+    .topbar{background:linear-gradient(120deg,var(--brand3),var(--brand) 45%,var(--brand2));color:#fff;
+      position:sticky;top:0;z-index:20;box-shadow:0 2px 20px rgba(13,46,38,.25)}
+    .topbar-in{max-width:1120px;margin:0 auto;padding:15px 22px;display:flex;align-items:center;gap:14px}
+    .logo{width:44px;height:44px;border-radius:13px;background:#fff;display:grid;place-items:center;flex:none;
+      box-shadow:0 0 0 2px var(--gold);overflow:hidden}
+    .logo img{width:100%;height:100%;object-fit:contain;padding:6px}
+    .logo span{color:var(--brand);font-family:'Fraunces',serif;font-weight:700;font-size:22px}
+    .brand b{font-family:'Fraunces',serif;font-size:19px;font-weight:600;display:block;line-height:1.1}
+    .brand small{font-size:11.5px;color:#cfe0d8;letter-spacing:.6px;text-transform:uppercase}
+    .spacer{flex:1}
+    .who{text-align:right;font-size:13.5px}
+    .who b{display:block}
+    .btn-out{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.28);
+      padding:9px 17px;border-radius:11px;cursor:pointer;font-weight:600;font-size:14px}
+    .btn-out:hover{background:rgba(255,255,255,.2)}
+
+    .tabs{max-width:1120px;margin:0 auto;padding:0 22px;display:flex;gap:6px}
+    .tabs button{background:none;border:0;padding:14px 18px;font-weight:600;font-size:14.5px;color:#cfe0d8;
+      cursor:pointer;border-bottom:3px solid transparent}
+    .tabs button.on{color:#fff;border-bottom-color:var(--gold)}
+
+    .wrap{max-width:1120px;margin:0 auto;padding:26px 22px 70px}
+    h1{font-family:'Fraunces',serif;font-size:27px;font-weight:600}
+    .sub{color:var(--soft);font-size:14.5px;margin-top:3px}
+
+    .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
+    .tile{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:17px 19px;
+      box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .tile::after{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+    .tile.a::after{background:var(--brand)}.tile.b::after{background:var(--ok)}.tile.c::after{background:var(--warn)}
+    .tile .l{font-size:12px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--faint)}
+    .tile .v{font-family:'Fraunces',serif;font-size:31px;font-weight:600;margin-top:4px;line-height:1}
+    .tile.b .v{color:var(--ok)}.tile.c .v{color:var(--warn)}
+
+    .card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+    .card-pad{padding:20px}
+    .bar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+    label.f{display:block;flex:1;min-width:190px}
+    label.f span{display:block;font-size:12.5px;font-weight:600;color:var(--soft);margin-bottom:5px}
+    input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;
+      background:#fcfdfc;outline:none;font-size:14.5px}
+    input:focus,select:focus,textarea:focus{border-color:var(--brand);background:#fff}
+    .btn{padding:12px 22px;border:0;border-radius:11px;background:var(--brand);color:#fff;font-weight:700;
+      cursor:pointer;font-size:14.5px;white-space:nowrap}
+    .btn:hover{background:var(--brand2)}
+    .btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--line)}
+
+    table{width:100%;border-collapse:collapse}
+    thead th{text-align:left;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
+      color:var(--faint);padding:14px 16px;border-bottom:1.5px solid var(--line);background:#fafcfb;white-space:nowrap}
+    tbody td{padding:14px 16px;border-bottom:1px solid #eff3f1;font-size:14.5px}
+    tbody tr:last-child td{border-bottom:0}
+    .roll{display:inline-block;font-size:12.5px;color:var(--brand);background:#eef4f1;padding:2px 9px;
+      border-radius:7px;font-weight:700}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:700}
+    .pill.ok{background:var(--ok-bg);color:var(--ok)}
+    .pill.warn{background:var(--warn-bg);color:var(--warn)}
+    .pill.bad{background:var(--bad-bg);color:var(--bad)}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .sec{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--gold);
+      margin:18px 0 10px}
+    .empty{text-align:center;padding:56px 20px;color:var(--faint)}
+    .empty .big{font-size:42px;margin-bottom:10px}
+    .empty b{display:block;color:var(--soft);font-size:16px;margin-bottom:4px}
+    .spin{display:grid;place-items:center;padding:60px}
+    .spin i{width:36px;height:36px;border:4px solid var(--line);border-top-color:var(--brand);border-radius:50%;
+      display:block;animation:sp .8s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    .hint{font-size:12.5px;color:var(--faint);margin-top:5px}
+    .hint b{color:var(--brand)}
+
+    /* login */
+    .gate{min-height:100vh;display:grid;place-items:center;padding:20px;
+      background:linear-gradient(135deg,#0b2b23,#123A4B 55%,#1C566E)}
+    .box{background:#fff;border-radius:24px;padding:38px 32px;width:100%;max-width:410px;
+      box-shadow:0 24px 60px rgba(13,46,38,.3)}
+    .box .logo{width:64px;height:64px;border-radius:18px;margin:0 auto 18px}
+    .box .logo span{font-size:30px}
+    .box h1{text-align:center;font-size:23px}
+    .box .s{text-align:center;color:var(--soft);font-size:13.5px;margin:4px 0 22px;letter-spacing:.3px;
+      text-transform:uppercase}
+    .box label{display:block;font-size:12.5px;font-weight:600;color:var(--soft);margin:0 0 6px}
+    .box input{margin-bottom:15px}
+    .box .btn{width:100%;padding:14px;font-size:16px}
+    .err{background:var(--bad-bg);color:var(--bad);padding:11px 14px;border-radius:11px;font-size:13.5px;
+      margin-bottom:15px;display:none}
+    .err.on{display:block}
+
+    /* modal */
+    .ov{position:fixed;inset:0;background:rgba(13,31,26,.55);backdrop-filter:blur(3px);display:none;
+      align-items:flex-start;justify-content:center;padding:26px;z-index:50;overflow-y:auto}
+    .ov.on{display:flex}
+    .modal{background:#fff;border-radius:20px;width:100%;max-width:640px;box-shadow:0 24px 60px rgba(13,46,38,.3)}
+    .modal-h{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+    .modal-h h2{font-family:'Fraunces',serif;font-size:19px;font-weight:600}
+    .modal-h button{margin-left:auto;background:none;border:0;font-size:22px;cursor:pointer;color:var(--faint)}
+    .modal-b{padding:20px 22px 24px}
+    .toast{position:fixed;right:20px;bottom:20px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--ok);
+      border-radius:12px;padding:13px 18px;box-shadow:0 12px 32px rgba(0,0,0,.14);z-index:80;display:none;max-width:340px}
+    .toast.on{display:block}
+    .toast.bad{border-left-color:var(--bad)}
+    .toast b{display:block;font-size:14px;margin-bottom:2px}
+    .toast span{font-size:13px;color:var(--soft)}
+    @media(max-width:760px){.tiles{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<div id="gate" class="gate" style="display:none">
+  <div class="box">
+    <div class="logo"><img src="/static/img/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none">B</span></div>
+    <h1>Referral Portal</h1>
+    <div class="s">Brains Group of IT Colleges</div>
+    <div class="err" id="lErr"></div>
+    <label>Email</label><input id="lEmail" type="email" placeholder="referral@brainscollege.edu.pk">
+    <label>Password</label><input id="lPass" type="password" placeholder="••••••••">
+    <button class="btn" id="lBtn">Sign in</button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div class="topbar-in">
+      <div class="logo"><img src="/static/img/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none">B</span></div>
+      <div class="brand"><b>Referral Portal</b><small>Brains Group of IT Colleges</small></div>
+      <div class="spacer"></div>
+      <div class="who"><b id="uName">—</b></div>
+      <button class="btn-out" id="logout">Logout</button>
+    </div>
+    <div class="tabs">
+      <button id="tabDash" class="on" onclick="go('dash')">Dashboard</button>
+      <button id="tabApps" onclick="go('apps')">Applications</button>
+    </div>
+  </div>
+  <div class="wrap" id="view"></div>
+</div>
+
+<div class="ov" id="ov"><div class="modal"><div class="modal-h"><h2 id="mT"></h2><button onclick="closeModal()">×</button></div><div class="modal-b" id="mB"></div></div></div>
+<div class="toast" id="toast"><b id="tT"></b><span id="tM"></span></div>
+
+<script>
+(function () {
+  const KEY = 'bc_referral_token';
+  let ME = null, OPTS = null;
+  const $ = id => document.getElementById(id);
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const num = v => Number(v || 0).toLocaleString('en-PK');
+  const tok = () => localStorage.getItem(KEY);
+
+  async function api(path, opts) {
+    opts = opts || {};
+    const h = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+    if (tok()) h['Authorization'] = 'Bearer ' + tok();
+    const res = await fetch(path, Object.assign({}, opts, { headers: h }));
+    if (res.status === 401) { showGate(); throw new Error('auth'); }
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(typeof d.detail === 'string' ? d.detail : 'Request failed');
+    return d;
+  }
+  window.toast = (t, m, bad) => {
+    $('tT').textContent = t; $('tM').textContent = m || '';
+    const el = $('toast'); el.className = 'toast on' + (bad ? ' bad' : '');
+    setTimeout(() => el.className = 'toast', 3600);
+  };
+  window.closeModal = () => $('ov').classList.remove('on');
+  function modal(title, html) { $('mT').textContent = title; $('mB').innerHTML = html; $('ov').classList.add('on'); }
+  $('ov').addEventListener('click', e => { if (e.target === $('ov')) closeModal(); });
+
+  function showGate() { localStorage.removeItem(KEY); $('gate').style.display = 'grid'; $('app').style.display = 'none'; }
+  function showApp() { $('gate').style.display = 'none'; $('app').style.display = 'block'; }
+
+  $('lBtn').addEventListener('click', login);
+  ['lEmail','lPass'].forEach(i => $(i).addEventListener('keydown', e => { if (e.key === 'Enter') login(); }));
+  async function login() {
+    const err = $('lErr'); err.classList.remove('on');
+    try {
+      const res = await fetch('/api/referral/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: $('lEmail').value.trim(), password: $('lPass').value })
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.detail || 'Login failed');
+      localStorage.setItem(KEY, d.access_token);
+      boot();
+    } catch (e) { err.textContent = e.message; err.classList.add('on'); }
+  }
+  $('logout').addEventListener('click', showGate);
+
+  async function boot() {
+    try {
+      ME = await api('/api/referral/me');
+      $('uName').textContent = ME.name;
+      showApp(); go('dash');
+    } catch (e) { if (e.message !== 'auth') showGate(); }
+  }
+
+  window.go = async function (tab) {
+    $('tabDash').className = tab === 'dash' ? 'on' : '';
+    $('tabApps').className = tab === 'apps' ? 'on' : '';
+    tab === 'dash' ? dashboard() : applications();
+  };
+
+  async function dashboard() {
+    $('view').innerHTML = '<div class="spin"><i></i></div>';
+    try {
+      const s = await api('/api/referral/stats');
+      $('view').innerHTML = `
+        <h1>Dashboard</h1><div class="sub">Your referral activity at a glance.</div>
+        <div class="tiles">
+          <div class="tile a"><div class="l">Total referrals</div><div class="v">${num(s.total_referrals)}</div></div>
+          <div class="tile b"><div class="l">Enrolled</div><div class="v">${num(s.enrolled_referrals)}</div></div>
+          <div class="tile c"><div class="l">Pending</div><div class="v">${num(s.pending_referrals)}</div></div>
+        </div>`;
+    } catch (e) { if (e.message !== 'auth') $('view').innerHTML = `<div class="empty"><div class="big">⚠️</div><b>Could not load</b>${esc(e.message)}</div>`; }
+  }
+
+  async function applications() {
+    $('view').innerHTML = `
+      <h1>Applications</h1><div class="sub">Pick a campus, then create a referral admission.</div>
+      <div style="height:18px"></div>
+      <div class="card"><div class="card-pad">
+        <div class="bar">
+          <label class="f"><span>Campus</span>
+            <select id="camp" onchange="campusPicked()">
+              <option value="">Select campus…</option>
+              ${(ME.campuses || []).map(c => `<option>${esc(c)}</option>`).join('')}
+            </select></label>
+          <button class="btn" id="newBtn" style="display:none" onclick="newApp()">+ Create New Application</button>
+        </div>
+        <div class="hint" id="rollHint"></div>
+      </div></div>
+      <div class="sec">My referrals</div>
+      <div class="card" id="list"><div class="spin"><i></i></div></div>`;
+    loadList();
+  }
+
+  window.campusPicked = async function () {
+    const c = $('camp').value;
+    $('newBtn').style.display = c ? '' : 'none';
+    if (!c) { $('rollHint').innerHTML = ''; return; }
+    try {
+      const r = await api('/api/referral/next-roll' + '?campus=' + encodeURIComponent(c));
+      $('rollHint').innerHTML = `Next referral roll number for ${esc(c)}: <b>${esc(r.next_roll)}</b>`;
+    } catch (e) { $('rollHint').textContent = e.message; }
+  };
+
+  async function loadList() {
+    const box = $('list');
+    try {
+      const r = await api('/api/referral/applications');
+      if (!r.items.length) {
+        box.innerHTML = '<div class="empty"><div class="big">👥</div><b>No referrals yet</b>Pick a campus above and create your first application.</div>';
+        return;
+      }
+      box.innerHTML = `<table><thead><tr>
+        <th>Student</th><th>Roll</th><th>Campus</th><th>Course</th><th>Status</th>
+      </tr></thead><tbody>
+      ${r.items.map(a => `<tr>
+        <td><b>${esc(a.full_name)}</b></td>
+        <td><span class="roll">${esc(a.roll_number)}</span></td>
+        <td>${esc(a.campus || '—')}</td>
+        <td>${esc(a.course_name || '—')}</td>
+        <td><span class="pill ${(a.referral_status === 'accepted' || a.application_status === 'approved') ? 'ok' : (a.referral_status === 'rejected' || a.application_status === 'rejected') ? 'bad' : 'warn'}">${esc(a.referral_status === 'accepted' || a.application_status === 'approved' ? 'Accepted' : a.referral_status === 'rejected' || a.application_status === 'rejected' ? 'Rejected' : 'Pending')}</span></td>
+      </tr>`).join('')}</tbody></table>`;
+    } catch (e) {
+      if (e.message !== 'auth') box.innerHTML = `<div class="empty"><div class="big">⚠️</div><b>Could not load</b>${esc(e.message)}</div>`;
+    }
+  }
+
+  window.newApp = async function () {
+    const campus = $('camp').value;
+    if (!campus) { toast('Pick a campus first', '', true); return; }
+    if (!OPTS) OPTS = await api('/api/meta/form-options');
+    const cats = OPTS.programme_categories || [];
+    modal('New referral application — ' + campus, `
+      <div class="grid2">
+        <label class="f"><span>Student Name *</span><input id="fName"></label>
+        <label class="f"><span>Father Name</span><input id="fFather"></label>
+        <label class="f"><span>Phone Number *</span><input id="fPhone" placeholder="03xx-xxxxxxx"></label>
+        <label class="f"><span>Guardian Phone Number</span><input id="fGuardian"></label>
+        <label class="f"><span>CNIC</span><input id="fCnic"></label>
+        <label class="f"><span>Email</span><input id="fEmail" type="email"></label>
+        <label class="f"><span>Programme Category *</span>
+          <select id="fCat" onchange="loadCourses()">
+            <option value="">Select…</option>
+            ${cats.map(c => `<option>${esc(c)}</option>`).join('')}
+          </select></label>
+        <label class="f"><span>Course *</span><select id="fCourse"><option value="">Select programme first</option></select></label>
+        <label class="f"><span>Class Timing *</span>
+          <select id="fTime"><option value="">Select…</option>
+            ${(OPTS.class_timings || ['Morning','Afternoon','Evening']).map(t => `<option>${esc(t)}</option>`).join('')}
+          </select></label>
+        <label class="f"><span>How did you hear about us? *</span>
+          <select id="fLead"><option value="">Select…</option>
+            ${(OPTS.lead_sources || ['Instagram','WhatsApp','Facebook','LinkedIn','YouTube','Others']).map(l => `<option>${esc(l)}</option>`).join('')}
+          </select></label>
+      </div>
+      <div style="text-align:right;margin-top:16px">
+        <button class="btn ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn" id="subBtn" onclick="submitApp('${esc(campus)}')">Create Application</button>
+      </div>`);
+  };
+
+  window.loadCourses = function () {
+    const cat = $('fCat').value;
+    const sel = $('fCourse');
+    // Same source of truth as the admin form: /api/meta/form-options →
+    // programme_catalog. Any course added there shows up here automatically.
+    const entry = (OPTS.programme_catalog || {})[cat];
+    if (!entry) { sel.innerHTML = '<option value="">Select programme first…</option>'; return; }
+    let html = '<option value="">Select course…</option>';
+    if (entry.grouped) {
+      Object.entries(entry.groups).forEach(([g, list]) => {
+        html += `<optgroup label="${esc(g)}">` +
+          list.map(c => `<option>${esc(c)}</option>`).join('') + '</optgroup>';
+      });
+    } else {
+      html += (entry.courses || []).map(c => `<option>${esc(c)}</option>`).join('');
+    }
+    sel.innerHTML = html;
+  };
+
+  window.submitApp = async function (campus) {
+    const val = id => ($(id).value || '').trim();
+    const body = {
+      full_name: val('fName'), father_name: val('fFather'),
+      phone: val('fPhone'), guardian_phone: val('fGuardian'),
+      cnic: val('fCnic') || null, email: val('fEmail') || null,
+      programme_category: val('fCat'), course_name: val('fCourse'),
+      session: '', class_timing: val('fTime'),
+      campus: campus, lead_source: val('fLead') || 'Others',
+      roll_number: 'AUTO'   // the server assigns the F- number
+    };
+    for (const [k, label] of [['full_name','Student Name'],['phone','Phone Number'],
+        ['programme_category','Programme Category'],['course_name','Course'],
+        ['class_timing','Class Timing'],['lead_source','How did you hear about us?']]) {
+      if (!body[k]) { toast('Missing field', label + ' is required.', true); return; }
+    }
+    const btn = $('subBtn'); btn.disabled = true; btn.textContent = 'Creating…';
+    try {
+      const a = await api('/api/referral/applications', { method: 'POST', body: JSON.stringify(body) });
+      closeModal();
+      toast('Referral created', a.full_name + ' — ' + a.roll_number);
+      loadList(); campusPicked();
+    } catch (e) {
+      toast('Could not create', e.message, true);
+      btn.disabled = false; btn.textContent = 'Create Application';
+    }
+  };
+
+  tok() ? boot() : showGate();
+})();
+</script>
+</body>
+</html>

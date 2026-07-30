@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply Online — Brains College, Lahore</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --brand: #123A4B; --brand-soft: #1C566E; --brass: #D6A94A;
+      --bg: #F4F6F8; --raised: #fff; --ink: #17242B; --ink-soft: #566771;
+      --line: #DDE4EA; --bad: #B03A2E; --bad-bg: #F8E3E0; --ok: #2E7D4F; --ok-bg: #E2F1E7;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14.5px; }
+    .hero {
+      background:
+        radial-gradient(900px 400px at 85% -20%, rgba(201,162,39,.18), transparent 60%),
+        var(--brand);
+      color: #E7EEF2; padding: 44px 20px 70px; text-align: center;
+    }
+    .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(26px, 4.5vw, 38px); margin: 0 0 8px; }
+    .hero p { margin: 0; opacity: .8; }
+    .wrap { max-width: 780px; margin: -40px auto 60px; padding: 0 16px; }
+    .card { background: var(--raised); border-radius: 16px; box-shadow: 0 6px 28px rgba(30,42,38,.12); padding: 30px; }
+    h2 { font-family: 'Fraunces', serif; font-size: 17px; margin: 26px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--brass); display: inline-block; }
+    h2:first-of-type { margin-top: 0; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+    @media (max-width: 620px) { .row { grid-template-columns: 1fr; } }
+    label { display: block; margin-bottom: 15px; }
+    label span { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-soft); margin-bottom: 5px; }
+    label span b { color: var(--bad); }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; font: inherit; font-size: 14px;
+      border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink);
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid rgba(18,61,51,.22); border-color: var(--brand); }
+    textarea { resize: vertical; min-height: 72px; }
+    .btn {
+      width: 100%; padding: 13px; margin-top: 8px; font: inherit; font-weight: 700; font-size: 15px;
+      background: var(--brand); color: #E9EDF1; border: none; border-radius: 11px; cursor: pointer;
+    }
+    .btn:hover { background: var(--brand-soft); }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+    .msg { display: none; border-radius: 10px; padding: 13px 15px; margin-bottom: 16px; font-size: 13.5px; }
+    .msg.err { display: block; background: var(--bad-bg); color: var(--bad); }
+    .msg.ok { display: block; background: var(--ok-bg); color: var(--ok); }
+    .done { text-align: center; padding: 30px 10px; }
+    .done .tick { font-size: 46px; }
+    .done h2 { border: none; display: block; font-size: 24px; margin: 8px 0 6px; }
+    .done .appno { font-family: 'Fraunces', serif; font-size: 22px; color: var(--brand); background: var(--ok-bg); display: inline-block; padding: 8px 20px; border-radius: 10px; margin: 12px 0; }
+    .foot { text-align: center; color: var(--ink-soft); font-size: 12.5px; margin-top: 22px; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Apply to Brains College</h1>
+    <p>Fill in the form below — the admissions office will contact you shortly.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card" id="formCard">
+      <div class="msg" id="msg"></div>
+
+      <h2>Student information</h2>
+      <div class="row">
+        <label><span>Full name <b>*</b></span><input id="full_name" required placeholder="e.g. Ali Raza"></label>
+        <label><span>Father's name</span><input id="father_name" placeholder="e.g. Muhammad Raza"></label>
+        <label><span>Roll Number <b>*</b></span><input id="roll_number" required placeholder="e.g. BC-2026-001"></label>
+        <label><span>Phone (WhatsApp) <b>*</b></span><input id="phone" required placeholder="0300-1234567" inputmode="tel"></label>
+        <label><span>Email</span><input id="email" type="email" placeholder="you@example.com"></label>
+        <label><span>CNIC / B-Form</span><input id="cnic" placeholder="35202-1234567-1" inputmode="numeric"></label>
+        <label><span>City</span><input id="city" placeholder="Lahore"></label>
+      </div>
+      <label><span>Home address</span><textarea id="address" placeholder="House, street, area…"></textarea></label>
+
+      <h2>Programme</h2>
+      <div class="row">
+        <label><span>Programme Category <b>*</b></span><select id="programme_category" required><option value="">Select…</option></select></label>
+        <label><span>Course <b>*</b></span><select id="course_name" required><option value="">Select programme first…</option></select></label>
+        <label><span>Session <b>*</b></span><select id="session" required><option value="">Select…</option></select></label>
+        <label><span>Class timing</span><select id="class_timing"><option value="">Select…</option><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Weekend</option></select></label>
+        <label><span>Marks</span><input id="percentage" type="number" min="0" max="100" step="0.01" placeholder="e.g. 84.5"></label>
+      </div>
+
+      <h2>How did you hear about us? <b style="color:#B03A2E">*</b></h2>
+      <div class="row">
+        <label><span>Lead Source <b>*</b></span><select id="lead_source" required><option value="">Select…</option></select></label>
+        <label id="specifyWrap" style="display:none"><span>Please specify <b>*</b></span><input id="lead_source_detail" placeholder="Tell us where"></label>
+      </div>
+
+      <button class="btn" id="submitBtn">Submit application</button>
+      <div class="foot">Brains College · Walton Road · Queen Road · Darogwala · Bhagbanpura</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var msg = document.getElementById('msg');
+      var btn = document.getElementById('submitBtn');
+      var OPTIONS = { catalog: {}, categories: [], lead_sources: [], sessions: [] };
+
+      function show(kind, text) { msg.className = 'msg ' + kind; msg.textContent = text; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      function v(id) { return document.getElementById(id).value.trim(); }
+
+      /* Load programme catalog, sessions and lead sources */
+      fetch('/api/meta/form-options').then(function (r) { return r.json(); }).then(function (o) {
+        OPTIONS = o;
+        document.getElementById('programme_category').innerHTML =
+          '<option value="">Select…</option>' + (o.programme_categories || []).map(function (c) { return '<option>' + c + '</option>'; }).join('');
+        document.getElementById('session').innerHTML =
+          '<option value="">Select…</option>' + (o.sessions || []).map(function (s) { return '<option>' + s + '</option>'; }).join('');
+        document.getElementById('lead_source').innerHTML =
+          '<option value="">Select…</option>' + (o.lead_sources || []).map(function (s) { return '<option>' + s + '</option>'; }).join('');
+      }).catch(function () { show('err', 'Could not load form options. Please refresh the page.'); });
+
+      function fillCourses(category) {
+        var cat = (OPTIONS.programme_catalog || {})[category];
+        var html = '<option value="">Select course…</option>';
+        if (cat && cat.grouped) {
+          Object.keys(cat.groups).forEach(function (g) {
+            html += '<optgroup label="' + g + '">' + cat.groups[g].map(function (c) { return '<option>' + c + '</option>'; }).join('') + '</optgroup>';
+          });
+        } else if (cat) {
+          html += cat.courses.map(function (c) { return '<option>' + c + '</option>'; }).join('');
+        }
+        document.getElementById('course_name').innerHTML = html;
+      }
+      document.getElementById('programme_category').addEventListener('change', function () { fillCourses(this.value); });
+      document.getElementById('lead_source').addEventListener('change', function () {
+        document.getElementById('specifyWrap').style.display = this.value === 'Others' ? 'block' : 'none';
+      });
+
+      btn.addEventListener('click', async function () {
+        if (!v('full_name') || v('full_name').length < 2) return show('err', 'Please enter the student\u2019s full name.');
+        if (!v('roll_number')) return show('err', 'Please enter the Roll Number.');
+        if (!v('phone')) return show('err', 'Please enter a phone number so we can contact you.');
+        if (!v('programme_category')) return show('err', 'Please choose a programme category.');
+        if (!v('course_name')) return show('err', 'Please choose a course.');
+        if (!v('session')) return show('err', 'Please choose a session.');
+        if (!v('lead_source')) return show('err', 'Please tell us how you heard about us.');
+        if (v('lead_source') === 'Others' && !v('lead_source_detail')) return show('err', 'Please specify how you heard about us.');
+
+        var body = {
+          full_name: v('full_name'), father_name: v('father_name'),
+          roll_number: v('roll_number'),
+          cnic: v('cnic') || null, phone: v('phone'), email: v('email') || null,
+          address: v('address'), city: v('city'),
+          programme_category: v('programme_category'), course_name: v('course_name'),
+          session: v('session'), class_timing: v('class_timing'),
+          lead_source: v('lead_source'), lead_source_detail: v('lead_source_detail'),
+          percentage: v('percentage') !== '' ? parseFloat(v('percentage')) : null
+        };
+
+        btn.disabled = true; btn.textContent = 'Submitting…'; msg.className = 'msg';
+        try {
+          var res = await fetch('/api/applications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          var data = await res.json().catch(function () { return {}; });
+          if (!res.ok) {
+            var detail = data.detail;
+            if (Array.isArray(detail)) detail = detail.map(function (e) { return e.msg; }).join(' · ');
+            throw new Error(detail || 'Submission failed. Please check the form and try again.');
+          }
+          var ch = data.challan || {};
+          document.getElementById('formCard').innerHTML =
+            '<div class="done"><div class="tick">🎓</div><h2>Application received!</h2>' +
+            '<p>Thank you, <b>' + escHTML(body.full_name) + '</b>. Please note your application number:</p>' +
+            '<div class="appno">' + escHTML(data.application_no || '') + '</div>' +
+            (ch.challan_no ?
+              '<p style="margin:6px 0 4px">Your fee challan <b>' + escHTML(ch.challan_no) + '</b> of <b>Rs ' + Number(ch.amount||0).toLocaleString() + '</b>' +
+              (ch.due_date ? ' is due by <b>' + escHTML(ch.due_date) + '</b>.' : '.') + '</p>' +
+              '<p><a class="btn" style="width:auto;display:inline-block;padding:12px 22px" href="/portal">Open Student Portal to print your challan</a></p>' +
+              '<p style="color:var(--ink-soft);font-size:13px">Pay via <b>JazzCash</b> and upload your receipt in the <a href="/portal">Student Portal</a>,<br>or pay <b>cash</b> at the college accounts office.</p>'
+              : '') +
+            '<p style="color:var(--ink-soft)">Our admissions office will call you on <b>' + escHTML(body.phone) + '</b>.<br>Keep this number for any follow-up.</p></div>';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (e) {
+          show('err', e.message);
+          btn.disabled = false; btn.textContent = 'Submit application';
+        }
+      });
+
+      function escHTML(s) {
+        return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+    })();
+  </script>
+</body>
+</html>

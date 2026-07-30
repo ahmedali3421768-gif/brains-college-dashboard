@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal — Brains College</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --brand: #123A4B; --brand-soft: #1C566E; --brass: #D6A94A;
+      --bg: #F4F6F8; --raised: #fff; --ink: #17242B; --ink-soft: #566771;
+      --line: #DDE4EA; --bad: #B03A2E; --bad-bg: #F8E3E0;
+      --ok: #2E7D4F; --ok-bg: #E2F1E7; --warn: #A66B00; --warn-bg: #F7ECD2;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14.5px; }
+    .hero { background: radial-gradient(900px 400px at 85% -20%, rgba(201,162,39,.18), transparent 60%), var(--brand); color: #E7EEF2; padding: 40px 20px 66px; text-align: center; }
+    .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(24px, 4.5vw, 34px); margin: 0 0 8px; }
+    .hero p { margin: 0; opacity: .8; }
+    .wrap { max-width: 820px; margin: -38px auto 60px; padding: 0 16px; }
+    .card { background: var(--raised); border-radius: 16px; box-shadow: 0 6px 28px rgba(30,42,38,.12); padding: 26px; margin-bottom: 18px; }
+    h2 { font-family: 'Fraunces', serif; font-size: 17px; margin: 0 0 14px; }
+    label { display: block; margin-bottom: 14px; }
+    label span { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-soft); margin-bottom: 5px; }
+    input, select, textarea { width: 100%; padding: 10px 12px; font: inherit; font-size: 14px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+    input:focus, select:focus { outline: 2px solid rgba(18,61,51,.22); border-color: var(--brand); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    @media (max-width: 620px) { .row { grid-template-columns: 1fr; } }
+    .btn { display: inline-block; padding: 11px 20px; font: inherit; font-weight: 700; background: var(--brand); color: #E9EDF1; border: none; border-radius: 10px; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: var(--brand-soft); }
+    .btn.gold { background: var(--brass); color: #123A4B; }
+    .btn.outline { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+    .btn.sm { padding: 7px 13px; font-size: 13px; border-radius: 8px; }
+    .msg { display: none; border-radius: 10px; padding: 12px 15px; margin-bottom: 14px; font-size: 13.5px; }
+    .msg.err { display: block; background: var(--bad-bg); color: var(--bad); }
+    .msg.ok { display: block; background: var(--ok-bg); color: var(--ok); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; text-transform: capitalize; }
+    .b-unpaid, .b-pending, .b-reupload_requested, .b-pending_verification { background: var(--warn-bg); color: var(--warn); }
+    .b-paid, .b-approved, .b-verified { background: var(--ok-bg); color: var(--ok); }
+    .b-rejected, .b-cancelled { background: var(--bad-bg); color: var(--bad); }
+    .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px 18px; margin: 10px 0 4px; }
+    .kv div b { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-soft); }
+    .challan { border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+    .challan-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .challan-head .no { font-family: 'Fraunces', serif; font-size: 18px; color: var(--brand); font-weight: 700; }
+    .challan-head .amt { margin-left: auto; font-weight: 700; font-size: 16px; }
+    .receipt { background: var(--bg); border-radius: 9px; padding: 9px 12px; margin-top: 8px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+    .pay-steps { font-size: 13px; color: var(--ink-soft); background: var(--bg); border-radius: 10px; padding: 12px 14px; margin: 12px 0; line-height: 1.7; }
+    .upload-box { border-top: 1px dashed var(--line); margin-top: 14px; padding-top: 14px; }
+    .foot { text-align: center; color: var(--ink-soft); font-size: 12.5px; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Student Portal</h1>
+    <p>Check your application, download your fee challan, and upload your payment receipt.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card" id="lookupCard">
+      <h2>Find my application</h2>
+      <div class="msg" id="lmsg"></div>
+      <div class="row">
+        <label><span>Application number</span><input id="appNo" placeholder="APP-2026-00001"></label>
+        <label><span>CNIC or phone number (as given on the form)</span><input id="idKey" placeholder="35202-1234567-1 or 0300-1234567"></label>
+      </div>
+      <button class="btn" id="lookupBtn">View my application</button>
+    </div>
+
+    <div id="result" style="display:none">
+      <div class="card">
+        <h2>Application status</h2>
+        <div class="kv" id="appInfo"></div>
+      </div>
+      <div id="challans"></div>
+    </div>
+
+    <div class="foot">Brains College, Lahore · Need help? Contact the admissions office at your campus.</div>
+  </div>
+
+  <script>
+    (function () {
+      var lmsg = document.getElementById('lmsg');
+      var current = null;
+
+      function esc(v) {
+        return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+      function badge(s) { return '<span class="badge b-' + esc(s) + '">' + esc(String(s || '—').replace(/_/g,' ')) + '</span>'; }
+      function showErr(m) { lmsg.className = 'msg err'; lmsg.textContent = m; }
+
+      document.getElementById('lookupBtn').addEventListener('click', lookup);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && document.getElementById('result').style.display === 'none') lookup();
+      });
+
+      async function lookup() {
+        var appNo = document.getElementById('appNo').value.trim();
+        var key = document.getElementById('idKey').value.trim();
+        if (!appNo || !key) return showErr('Enter your application number and your CNIC or phone.');
+        lmsg.className = 'msg';
+        try {
+          var res = await fetch('/api/portal/lookup?application_no=' + encodeURIComponent(appNo) + '&cnic_or_phone=' + encodeURIComponent(key));
+          var data = await res.json();
+          if (!res.ok) throw new Error(data.detail || 'Not found');
+          current = data;
+          render(data);
+        } catch (e) { showErr(e.message); }
+      }
+
+      function render(data) {
+        var a = data.application;
+        document.getElementById('result').style.display = '';
+        document.getElementById('appInfo').innerHTML =
+          '<div><b>Application №</b>' + esc(a.application_no) + '</div>' +
+          '<div><b>Student</b>' + esc(a.full_name) + '</div>' +
+          '<div><b>Course</b>' + esc(a.course || '—') + '</div>' +
+          '<div><b>Campus</b>' + esc(a.campus || '—') + '</div>' +
+          '<div><b>Application</b>' + badge(a.application_status) + '</div>' +
+          '<div><b>Payment</b>' + badge(a.payment_status) + '</div>' +
+          '<div><b>Admission</b>' + badge(a.admission_status) + '</div>';
+
+        document.getElementById('challans').innerHTML = data.challans.map(challanHTML).join('') ||
+          '<div class="card">No challans yet.</div>';
+        data.challans.forEach(wireUpload);
+      }
+
+      function challanHTML(c) {
+        var receipts = (c.receipts || []).map(function (r) {
+          return '<div class="receipt">🧾 ' + esc(r.original_name) +
+            (r.transaction_id ? ' · Txn ' + esc(r.transaction_id) : '') +
+            ' · ' + badge(r.status) +
+            (r.verification_remarks ? ' · <i>' + esc(r.verification_remarks) + '</i>' : '') + '</div>';
+        }).join('');
+
+        var canUpload = c.status !== 'paid' && c.status !== 'cancelled';
+        return '<div class="card challan" data-id="' + esc(c.challan_no) + '">' +
+          '<div class="challan-head">' +
+            '<span class="no">' + esc(c.challan_no) + '</span>' + badge(c.status) +
+            '<span class="amt">Rs ' + Number(c.amount).toLocaleString() + '/-</span>' +
+          '</div>' +
+          '<div class="kv" style="margin-top:10px">' +
+            '<div><b>Due date</b>' + esc(c.due_date || '—') + '</div>' +
+            '<div><b>Payment method</b>' + esc(c.payment_method || 'not chosen yet') + '</div>' +
+          '</div>' +
+          '<p style="margin:10px 0 0"><a class="btn gold sm" href="' + esc(c.print_url) + '">🖨 View / Print challan</a></p>' +
+          receipts +
+          (canUpload ?
+          '<div class="upload-box">' +
+            '<h2 style="font-size:15px">Paid already? Upload your receipt</h2>' +
+            '<div class="pay-steps"><b>JazzCash:</b> pay the amount → take a screenshot / save the receipt → upload it below with your Transaction ID.<br><b>Cash:</b> visit the college accounts office with your printed challan — no upload needed.</div>' +
+            '<div class="msg" data-role="umsg"></div>' +
+            '<div class="row">' +
+              '<label><span>Payment method</span><select data-role="method"><option value="jazzcash">JazzCash (online)</option><option value="cash">Cash (paid at college)</option></select></label>' +
+              '<label><span>Transaction ID (JazzCash)</span><input data-role="txn" placeholder="e.g. 0123456789"></label>' +
+              '<label><span>JazzCash mobile number</span><input data-role="jznum" placeholder="0300-1234567"></label>' +
+              '<label><span>Payment date</span><input type="date" data-role="pdate"></label>' +
+            '</div>' +
+            '<label><span>Receipt file (PDF / JPG / PNG, max 10 MB)</span><input type="file" data-role="file" accept=".pdf,.jpg,.jpeg,.png"></label>' +
+            '<label><span>Remarks (optional)</span><input data-role="remarks" placeholder="Anything the office should know"></label>' +
+            '<button class="btn" data-role="upBtn">Upload receipt</button>' +
+          '</div>' : '') +
+        '</div>';
+      }
+
+      function wireUpload(c) {
+        var box = document.querySelector('.challan[data-id="' + CSS.escape(c.challan_no) + '"]');
+        if (!box) return;
+        var btn = box.querySelector('[data-role="upBtn"]');
+        if (!btn) return;
+        var umsg = box.querySelector('[data-role="umsg"]');
+        btn.addEventListener('click', async function () {
+          var fileInput = box.querySelector('[data-role="file"]');
+          if (!fileInput.files.length) { umsg.className = 'msg err'; umsg.textContent = 'Choose your receipt file first.'; return; }
+          var fd = new FormData();
+          fd.append('file', fileInput.files[0]);
+          fd.append('payment_method', box.querySelector('[data-role="method"]').value);
+          fd.append('transaction_id', box.querySelector('[data-role="txn"]').value.trim());
+          fd.append('jazzcash_number', box.querySelector('[data-role="jznum"]').value.trim());
+          fd.append('payment_date', box.querySelector('[data-role="pdate"]').value);
+          fd.append('remarks', box.querySelector('[data-role="remarks"]').value.trim());
+
+          btn.disabled = true; btn.textContent = 'Uploading…'; umsg.className = 'msg';
+          try {
+            var res = await fetch(c.upload_url, { method: 'POST', body: fd });
+            var data = await res.json();
+            if (!res.ok) throw new Error(data.detail || 'Upload failed');
+            umsg.className = 'msg ok';
+            umsg.textContent = data.message || 'Receipt uploaded — awaiting verification.';
+            setTimeout(function () { document.getElementById('lookupBtn').click(); }, 1200);
+          } catch (e) {
+            umsg.className = 'msg err'; umsg.textContent = e.message;
+            btn.disabled = false; btn.textContent = 'Upload receipt';
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
