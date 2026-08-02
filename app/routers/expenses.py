@@ -5,6 +5,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.config import settings
 from sqlalchemy import desc, func, or_
 from sqlalchemy.orm import Session
 
@@ -186,17 +187,50 @@ def expense_dashboard(date_from: str | None = None, date_to: str | None = None,
     }
 
 
-def _monthly_trend(db: Session, campus: str | None = None,
-                   date_from: str | None = None,
-                   date_to: str | None = None) -> list[dict]:
-    q = db.query(func.strftime("%Y-%m", Expense.created_at).label("m"),
-                 func.coalesce(func.sum(Expense.amount), 0))
+def _monthly_trend(
+    db: Session,
+    campus: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+) -> list[dict]:
+    """
+    Returns monthly expense totals.
+
+    Compatible with both:
+    - SQLite (local development)
+    - PostgreSQL (Render production)
+    """
+
+    # Select the correct SQL function depending on the database.
+    if settings.DATABASE_URL.startswith("sqlite"):
+        month_expr = func.strftime("%Y-%m", Expense.created_at)
+    else:
+        month_expr = func.to_char(Expense.created_at, "YYYY-MM")
+
+    q = db.query(
+        month_expr.label("month"),
+        func.coalesce(func.sum(Expense.amount), 0).label("amount"),
+    )
+
     if campus:
         q = q.filter(Expense.campus == campus)
+
     if date_from:
         q = q.filter(Expense.purchase_date >= date_from)
+
     if date_to:
         q = q.filter(Expense.purchase_date <= date_to)
-    rows = q.group_by("m").order_by("m").all()
-    # SQLite strftime; for Postgres fall back to to_char handled by ORM dialect
-    return [{"month": m, "amount": round(float(v), 2)} for m, v in rows][-6:]
+
+    rows = (
+        q.group_by(month_expr)
+         .order_by(month_expr)
+         .all()
+    )
+
+    return [
+        {
+            "month": month,
+            "amount": round(float(amount), 2),
+        }
+        for month, amount in rows
+    ][-6:]
