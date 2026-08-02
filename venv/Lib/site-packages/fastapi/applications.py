@@ -66,7 +66,7 @@ class FastAPI(Starlette):
                 errors.
 
                 Read more in the
-                [Starlette docs for Applications](https://www.starlette.dev/applications/#instantiating-the-application).
+                [Starlette docs for Applications](https://starlette.dev/applications/#starlette.applications.Starlette).
                 """
             ),
         ] = False,
@@ -960,7 +960,7 @@ class FastAPI(Starlette):
                 This is simply inherited from Starlette.
 
                 Read more about it in the
-                [Starlette docs for Applications](https://www.starlette.dev/applications/#storing-state-on-the-app-instance).
+                [Starlette docs for Applications](https://starlette.dev/applications/#storing-state-on-the-app-instance).
                 """
             ),
         ] = State()
@@ -1247,13 +1247,16 @@ class FastAPI(Starlette):
             ),
         ] = "auto",
         check_dir: Annotated[
-            bool,
+            bool | Literal["auto"],
             Doc(
                 """
-                Check that the frontend directory exists when the app is created.
+                Check that the frontend directory exists when the app is created. When
+                set to `"auto"`, skip the check with a warning when `FASTAPI_ENV` is
+                `"development"`, and check it otherwise. The `fastapi dev` command
+                sets `FASTAPI_ENV` to `"development"` if it is not already set.
                 """
             ),
-        ] = True,
+        ] = "auto",
     ) -> None:
         """
         Serve a static frontend build as low-priority routes.
@@ -1285,6 +1288,9 @@ class FastAPI(Starlette):
         app.frontend("/", directory="dist")
         ```
         """
+        check_dir = routing._resolve_frontend_check_dir(
+            directory=directory, check_dir=check_dir
+        )
         self.router.frontend(
             path,
             directory=directory,
