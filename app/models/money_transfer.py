@@ -8,7 +8,7 @@ the day's collection figures shift between campuses without touching the
 student's own fee records.
 """
 from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 from app.utils.timeutil import now
@@ -25,8 +25,9 @@ class MoneyTransfer(Base):
     dest_campus: Mapped[str] = mapped_column(String(60), index=True)
 
     application_id: Mapped[int] = mapped_column(
-        ForeignKey("applications.id"), index=True)
-    student_id: Mapped[int] = mapped_column(ForeignKey("students.id"), index=True)
+        ForeignKey("applications.id", ondelete="CASCADE"), index=True)
+    student_id: Mapped[int] = mapped_column(
+        ForeignKey("students.id", ondelete="CASCADE"), index=True)
     student_name: Mapped[str] = mapped_column(String(120), default="")
     father_name: Mapped[str] = mapped_column(String(120), default="")
     course: Mapped[str] = mapped_column(String(150), default="")
@@ -49,3 +50,5 @@ class MoneyTransfer(Base):
     decided_by_name: Mapped[str] = mapped_column(String(100), default="")
     approved_at: Mapped[object] = mapped_column(DateTime, nullable=True)
     rejected_at: Mapped[object] = mapped_column(DateTime, nullable=True)
+
+    application = relationship("Application", back_populates="money_transfers")

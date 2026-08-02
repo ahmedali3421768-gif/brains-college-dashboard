@@ -23,7 +23,7 @@ class Installment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     application_id: Mapped[int] = mapped_column(
-        ForeignKey("applications.id"), index=True)
+        ForeignKey("applications.id", ondelete="CASCADE"), index=True)
     number: Mapped[int] = mapped_column(Integer, default=1)
     label: Mapped[str] = mapped_column(String(60), default="Installment")
     # Which of the four schedule stages this row is:
@@ -41,7 +41,11 @@ class Installment(Base):
     created_at: Mapped[object] = mapped_column(DateTime, default=now)
     updated_at: Mapped[object] = mapped_column(DateTime, default=now, onupdate=now)
 
-    application = relationship("Application", backref="installments")
+    application = relationship("Application", back_populates="installments")
+    allocations = relationship(
+        "PaymentAllocation", back_populates="installment",
+        cascade="all, delete-orphan", passive_deletes=True
+    )
 
 
 # receipt number captured when a payment is approved/recorded
@@ -59,9 +63,9 @@ class PaymentAllocation(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     application_id: Mapped[int] = mapped_column(
-        ForeignKey("applications.id"), index=True)
+        ForeignKey("applications.id", ondelete="CASCADE"), index=True)
     installment_id: Mapped[int] = mapped_column(
-        ForeignKey("installments.id"), index=True)
+        ForeignKey("installments.id", ondelete="CASCADE"), index=True)
     stage: Mapped[str] = mapped_column(String(30), default="", index=True)
     amount: Mapped[float] = mapped_column(Float, default=0)
     receipt_number: Mapped[str] = mapped_column(String(60), default="", index=True)
@@ -70,3 +74,6 @@ class PaymentAllocation(Base):
     paid_on: Mapped[object] = mapped_column(Date, nullable=True, index=True)
     recorded_by_name: Mapped[str] = mapped_column(String(100), default="")
     created_at: Mapped[object] = mapped_column(DateTime, default=now, index=True)
+
+    application = relationship("Application", back_populates="payment_allocations")
+    installment = relationship("Installment", back_populates="allocations")

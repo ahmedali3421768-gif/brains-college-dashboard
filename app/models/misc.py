@@ -56,21 +56,23 @@ class Lead(Base):
     follow_up_at: Mapped[object] = mapped_column(DateTime, nullable=True, index=True)
 
     student_id: Mapped[int] = mapped_column(
-        ForeignKey("students.id"), nullable=True, index=True)  # set on conversion
+        ForeignKey("students.id", ondelete="SET NULL"), nullable=True, index=True)  # set on conversion
     session_id: Mapped[str] = mapped_column(String(36), nullable=True)
 
     created_at: Mapped[object] = mapped_column(DateTime, default=now, index=True)
     updated_at: Mapped[object] = mapped_column(DateTime, default=now, onupdate=now)
 
     notes = relationship("LeadNote", back_populates="lead",
-                         order_by="LeadNote.created_at")
+                         order_by="LeadNote.created_at",
+                         cascade="all, delete-orphan", passive_deletes=True)
 
 
 class LeadNote(Base):
     __tablename__ = "lead_notes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    lead_id: Mapped[int] = mapped_column(ForeignKey("leads.id"), index=True)
+    lead_id: Mapped[int] = mapped_column(
+        ForeignKey("leads.id", ondelete="CASCADE"), index=True)
     admin_id: Mapped[int] = mapped_column(ForeignKey("admins.id"), nullable=True)
     admin_name: Mapped[str] = mapped_column(String(100), default="")
     note: Mapped[str] = mapped_column(Text)

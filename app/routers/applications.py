@@ -455,37 +455,31 @@ def delete_application(app_id: int, admin: Admin = Depends(managers),
     The student's chat history is preserved (unlinked, not deleted)."""
     app_obj = _get_or_404(db, app_id, admin)
     student = app_obj.student
-    roll = student.roll_number if student else app_obj.application_no
+    student_id = student.id if student else None
+    roll = (student.roll_number if student and student.roll_number
+            else app_obj.application_no)
 
-    from app.models import (ApplicationNote, Challan, Installment, Payment,
-                            PaymentReceipt)
-    # remove receipts, then challans, then installments, notes, payments
-    challan_ids = [c.id for c in db.query(Challan)
-                   .filter(Challan.application_id == app_obj.id).all()]
-    if challan_ids:
-        db.query(PaymentReceipt).filter(
-            PaymentReceipt.challan_id.in_(challan_ids)).delete(
-            synchronize_session=False)
-        db.query(Challan).filter(
-            Challan.application_id == app_obj.id).delete(
-            synchronize_session=False)
-    db.query(Installment).filter(
-        Installment.application_id == app_obj.id).delete(
-        synchronize_session=False)
-    db.query(ApplicationNote).filter(
-        ApplicationNote.application_id == app_obj.id).delete(
-        synchronize_session=False)
-    db.query(Payment).filter(
-        Payment.application_id == app_obj.id).delete(
-        synchronize_session=False)
+    # Delete application — ORM cascade handles all child entities (installments,
+    # payment_allocations, payments, challans, receipts, notes, transfers)
     db.delete(app_obj)
     db.commit()
 
-    # remove the student row only if they have no other applications
-    if student and not db.query(Application).filter(
-            Application.student_id == student.id).count():
-        db.delete(student)
-        db.commit()
+    # Remove the student row only if they have no remaining applications
+    if student_id:
+        remaining_apps = db.query(Application).filter(
+            Application.student_id == student_id).count()
+        if remaining_apps == 0:
+            student_obj = db.get(Student, student_id)
+            if student_obj:
+                from app.models import ChatSession, Lead
+                db.query(ChatSession).filter(
+                    ChatSession.student_id == student_id).update(
+                    {ChatSession.student_id: None}, synchronize_session=False)
+                db.query(Lead).filter(
+                    Lead.student_id == student_id).update(
+                    {Lead.student_id: None}, synchronize_session=False)
+                db.delete(student_obj)
+                db.commit()
 
     db.add(ActivityLog(admin_id=admin.id, action="application_deleted",
                        detail=f"Deleted application Roll {roll} by {admin.name}"))

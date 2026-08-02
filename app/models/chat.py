@@ -12,7 +12,7 @@ class ChatSession(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True)  # uuid4 hex
     visitor_id: Mapped[str] = mapped_column(String(40), index=True)  # ip+ua hash
     student_id: Mapped[int] = mapped_column(
-        ForeignKey("students.id"), nullable=True, index=True
+        ForeignKey("students.id", ondelete="SET NULL"), nullable=True, index=True
     )
     visitor_name: Mapped[str] = mapped_column(String(120), nullable=True)
     visitor_phone: Mapped[str] = mapped_column(String(25), nullable=True, index=True)
@@ -33,7 +33,8 @@ class ChatSession(Base):
     last_activity_at: Mapped[object] = mapped_column(DateTime, default=now, index=True)
 
     messages = relationship(
-        "ChatMessage", back_populates="session", order_by="ChatMessage.created_at"
+        "ChatMessage", back_populates="session", order_by="ChatMessage.created_at",
+        cascade="all, delete-orphan", passive_deletes=True
     )
     student = relationship("Student")
 
@@ -43,7 +44,7 @@ class ChatMessage(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     session_id: Mapped[str] = mapped_column(
-        ForeignKey("chat_sessions.id"), index=True
+        ForeignKey("chat_sessions.id", ondelete="CASCADE"), index=True
     )
     role: Mapped[str] = mapped_column(String(15))  # "user" | "assistant"
     content: Mapped[str] = mapped_column(Text)

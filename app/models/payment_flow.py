@@ -42,7 +42,7 @@ class Challan(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     challan_no: Mapped[str] = mapped_column(String(30), unique=True, index=True)
     application_id: Mapped[int] = mapped_column(
-        ForeignKey("applications.id"), index=True
+        ForeignKey("applications.id", ondelete="CASCADE"), index=True
     )
     amount: Mapped[float] = mapped_column(Float, default=0)
     due_date: Mapped[object] = mapped_column(Date, nullable=True)
@@ -62,10 +62,11 @@ class Challan(Base):
     created_at: Mapped[object] = mapped_column(DateTime, default=now, index=True)
     updated_at: Mapped[object] = mapped_column(DateTime, default=now, onupdate=now)
 
-    application = relationship("Application", backref="challans")
+    application = relationship("Application", back_populates="challans")
     receipts = relationship(
         "PaymentReceipt", back_populates="challan",
-        order_by="PaymentReceipt.created_at")
+        order_by="PaymentReceipt.created_at",
+        cascade="all, delete-orphan", passive_deletes=True)
 
 
 class PaymentReceipt(Base):
@@ -74,7 +75,8 @@ class PaymentReceipt(Base):
     __tablename__ = "payment_receipts"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    challan_id: Mapped[int] = mapped_column(ForeignKey("challans.id"), index=True)
+    challan_id: Mapped[int] = mapped_column(
+        ForeignKey("challans.id", ondelete="CASCADE"), index=True)
     file_path: Mapped[str] = mapped_column(String(300))
     original_name: Mapped[str] = mapped_column(String(200), default="")
     content_type: Mapped[str] = mapped_column(String(60), default="")

@@ -142,9 +142,27 @@ class Application(Base):
     department = relationship("Department")
     course = relationship("Course")
     notes = relationship(
-        "ApplicationNote", back_populates="application", order_by="ApplicationNote.created_at"
+        "ApplicationNote", back_populates="application", order_by="ApplicationNote.created_at",
+        cascade="all, delete-orphan", passive_deletes=True
     )
-    payments = relationship("Payment", back_populates="application")
+    payments = relationship(
+        "Payment", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+    )
+    installments = relationship(
+        "Installment", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+    )
+    payment_allocations = relationship(
+        "PaymentAllocation", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+    )
+    challans = relationship(
+        "Challan", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+    )
+    transfer_requests = relationship(
+        "TransferRequest", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+    )
+    money_transfers = relationship(
+        "MoneyTransfer", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+    )
 
 
 class ApplicationNote(Base):
@@ -152,7 +170,7 @@ class ApplicationNote(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     application_id: Mapped[int] = mapped_column(
-        ForeignKey("applications.id"), index=True
+        ForeignKey("applications.id", ondelete="CASCADE"), index=True
     )
     admin_id: Mapped[int] = mapped_column(ForeignKey("admins.id"), nullable=True)
     admin_name: Mapped[str] = mapped_column(String(100), default="")
@@ -167,7 +185,7 @@ class Payment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     application_id: Mapped[int] = mapped_column(
-        ForeignKey("applications.id"), index=True
+        ForeignKey("applications.id", ondelete="CASCADE"), index=True
     )
     amount: Mapped[float] = mapped_column(Float, default=0)
     method: Mapped[str] = mapped_column(String(40), default="")

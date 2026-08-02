@@ -59,7 +59,7 @@ class TransferRequest(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     application_id: Mapped[int] = mapped_column(
-        ForeignKey("applications.id"), index=True)
+        ForeignKey("applications.id", ondelete="CASCADE"), index=True)
     from_campus: Mapped[str] = mapped_column(String(60), index=True)
     to_campus: Mapped[str] = mapped_column(String(60), index=True)
     status: Mapped[str] = mapped_column(String(20), default="pending", index=True)
@@ -78,3 +78,5 @@ class TransferRequest(Base):
     decided_at: Mapped[object] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[object] = mapped_column(
         DateTime, default=now, index=True)
+
+    application = relationship("Application", back_populates="transfer_requests")
