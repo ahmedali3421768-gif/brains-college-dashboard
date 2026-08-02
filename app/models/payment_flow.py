@@ -66,7 +66,7 @@ class Challan(Base):
     receipts = relationship(
         "PaymentReceipt", back_populates="challan",
         order_by="PaymentReceipt.created_at",
-        cascade="all, delete-orphan", passive_deletes=True)
+        cascade="all, delete-orphan")
 
 
 class PaymentReceipt(Base):

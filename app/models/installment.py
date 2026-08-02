@@ -44,7 +44,7 @@ class Installment(Base):
     application = relationship("Application", back_populates="installments")
     allocations = relationship(
         "PaymentAllocation", back_populates="installment",
-        cascade="all, delete-orphan", passive_deletes=True
+        cascade="all, delete-orphan"
     )
 
 

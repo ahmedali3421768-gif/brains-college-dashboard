@@ -143,25 +143,25 @@ class Application(Base):
     course = relationship("Course")
     notes = relationship(
         "ApplicationNote", back_populates="application", order_by="ApplicationNote.created_at",
-        cascade="all, delete-orphan", passive_deletes=True
+        cascade="all, delete-orphan"
     )
     payments = relationship(
-        "Payment", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+        "Payment", back_populates="application", cascade="all, delete-orphan"
     )
     installments = relationship(
-        "Installment", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+        "Installment", back_populates="application", cascade="all, delete-orphan"
     )
     payment_allocations = relationship(
-        "PaymentAllocation", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+        "PaymentAllocation", back_populates="application", cascade="all, delete-orphan"
     )
     challans = relationship(
-        "Challan", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+        "Challan", back_populates="application", cascade="all, delete-orphan"
     )
     transfer_requests = relationship(
-        "TransferRequest", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+        "TransferRequest", back_populates="application", cascade="all, delete-orphan"
     )
     money_transfers = relationship(
-        "MoneyTransfer", back_populates="application", cascade="all, delete-orphan", passive_deletes=True
+        "MoneyTransfer", back_populates="application", cascade="all, delete-orphan"
     )
 
 

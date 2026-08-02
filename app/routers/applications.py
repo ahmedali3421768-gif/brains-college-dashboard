@@ -458,9 +458,38 @@ def delete_application(app_id: int, admin: Admin = Depends(managers),
     student_id = student.id if student else None
     roll = (student.roll_number if student and student.roll_number
             else app_obj.application_no)
+    target_app_id = app_obj.id
 
-    # Delete application — ORM cascade handles all child entities (installments,
-    # payment_allocations, payments, challans, receipts, notes, transfers)
+    from app.models import (ApplicationNote, Challan, Installment, MoneyTransfer,
+                            Payment, PaymentAllocation, PaymentReceipt, TransferRequest)
+
+    # 1. Delete PaymentReceipts (child of Challans)
+    challan_ids = [c.id for c in db.query(Challan.id).filter(Challan.application_id == target_app_id).all()]
+    if challan_ids:
+        db.query(PaymentReceipt).filter(PaymentReceipt.challan_id.in_(challan_ids)).delete(synchronize_session=False)
+
+    # 2. Delete PaymentAllocations (child of Installments and Applications)
+    db.query(PaymentAllocation).filter(PaymentAllocation.application_id == target_app_id).delete(synchronize_session=False)
+
+    # 3. Delete Challans
+    db.query(Challan).filter(Challan.application_id == target_app_id).delete(synchronize_session=False)
+
+    # 4. Delete Installments
+    db.query(Installment).filter(Installment.application_id == target_app_id).delete(synchronize_session=False)
+
+    # 5. Delete Payments
+    db.query(Payment).filter(Payment.application_id == target_app_id).delete(synchronize_session=False)
+
+    # 6. Delete ApplicationNotes
+    db.query(ApplicationNote).filter(ApplicationNote.application_id == target_app_id).delete(synchronize_session=False)
+
+    # 7. Delete TransferRequests
+    db.query(TransferRequest).filter(TransferRequest.application_id == target_app_id).delete(synchronize_session=False)
+
+    # 8. Delete MoneyTransfers
+    db.query(MoneyTransfer).filter(MoneyTransfer.application_id == target_app_id).delete(synchronize_session=False)
+
+    # 9. Delete Application row
     db.delete(app_obj)
     db.commit()
 
@@ -478,6 +507,8 @@ def delete_application(app_id: int, admin: Admin = Depends(managers),
                 db.query(Lead).filter(
                     Lead.student_id == student_id).update(
                     {Lead.student_id: None}, synchronize_session=False)
+                db.query(MoneyTransfer).filter(
+                    MoneyTransfer.student_id == student_id).delete(synchronize_session=False)
                 db.delete(student_obj)
                 db.commit()
 

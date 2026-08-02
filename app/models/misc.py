@@ -64,7 +64,7 @@ class Lead(Base):
 
     notes = relationship("LeadNote", back_populates="lead",
                          order_by="LeadNote.created_at",
-                         cascade="all, delete-orphan", passive_deletes=True)
+                         cascade="all, delete-orphan")
 
 
 class LeadNote(Base):
